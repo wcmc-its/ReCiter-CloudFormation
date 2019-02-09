@@ -1,7 +1,26 @@
 # ReCiter-CloudFormation
 AWS CloudFormation for ReCiter
 
-CloudFormation Resources
+##### CloudFormation Resources
 
 1. https://medium.com/boltops/why-generate-cloudformation-templates-with-lono-65b8ea5eb87d
 2. https://github.com/stelligent/cloudformation_templates/tree/master/labs/eb
+
+#### Commonly Used Intrinsic Functions.
+
+##### Fn:ImportValue
+https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-importvalue.html
+
+Usage: Returns the value of an output exported by another stack. Typically used to create cross-stack references.
+
+##### Ref
+https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-ref.html
+
+Usage: Returns the value of the specified parameter or resource.
+
+##### Common Errors
+
+1. Pipeline has only 1 stages. There should be a minimum of 2 stages in a pipeline (Service: AWSCodePipeline; Status Code: 400; Error Code: InvalidStructureException; Request ID: 87eedc5c-fa4b-4338-959f-e1e084c6a177)
+
+AWS CloudFormation requires at least 2 stages in the CodePipeline configuration when initializing a stack.
+
