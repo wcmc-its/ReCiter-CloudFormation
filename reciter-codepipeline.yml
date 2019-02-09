@@ -38,7 +38,7 @@ Resources:
       ArtifactStore:
         Location: !Ref 'ArtifactStoreBucket'
         Type: S3
-      Name: !Ref 'ProjectName'
+      Name: ReCiter-TestCodePipeline
       RoleArn: !GetAtt [PipelineRole, Arn]
       Stages:
         - Name: GitHubSource
@@ -50,7 +50,7 @@ Resources:
                 Provider: S3
                 Version: '1'
               Configuration:
-                S3Bucket: !ImportValue 'github-to-s3-outputbucket'
+                S3Bucket: 'github-to-s3-outputbucket'
                 S3ObjectKey: !Sub '${GitHubOwner}/${GitHubRepo}/${GitHubOwner}_${GitHubRepo}.zip'
               OutputArtifacts:
                 - Name: AppSource
@@ -79,41 +79,11 @@ Resources:
         ComputeType: BUILD_GENERAL1_SMALL
         Image: aws/codebuild/docker:17.09.0
         Type: LINUX_CONTAINER
-        EnvironmentVariables:
-        - Name: REPOSITORY_URI
-          Value: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ContainerRegistry}
-      Name: !Ref ProjectName
+      Name: ReCiter-TestCodeBuild
       ServiceRole:
         Fn::GetAtt:
         - CodeBuildRole
         - Arn
-  ContainerRegistry:
-    Type: "AWS::ElasticBeanstalk::Environment"
-    Properties:
-      ApplicationName: !Ref ProjectName
-      CNAMEPrefix: !Ref ProjectName
-      Description: !Ref ProjectName
-      EnvironmentName: !Ref ProjectName
-  CFNRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Statement:
-        - Action: ['sts:AssumeRole']
-          Effect: Allow
-          Principal:
-            Service: [cloudformation.amazonaws.com]
-        Version: '2012-10-17'
-      Path: /
-      Policies:
-        - PolicyName: CloudFormationRole
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Action:
-                  - 'ec2:*'
-                Effect: Allow
-                Resource: '*'
   PipelineRole:
     Type: AWS::IAM::Role
     Properties:
