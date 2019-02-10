@@ -1,130 +1,144 @@
----
-AWSTemplateFormatVersion: "2010-09-09"
-Description: Create a ElasticBeanstalk CI/CD pipeline with CodePipeline, CodeBuild and ElasticBeanstalk
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Create a ElasticBeanstalk CI/CD pipeline with CodePipeline, CodeBuild and ElasticBeanstalk'
 Parameters:
-  ProjectName:
-    Default: ReCiter 
-    Description: ReCiter
-    Type: String
-  GitHubOwner:
-    Default: wcmc-its
-    Description: The owner or organization for the GitHub project
-    Type: String
-  GitHubRepo:
-    Default: ReCiter
-    Description: The GitHub repository name
-    Type: String
+    ProjectName:
+        Default: ReCiter
+        Description: ReCiter
+        Type: String
+    GitHubOwner:
+        Default: wcmc-its
+        Description: 'The owner or organization for the GitHub project'
+        Type: String
+    GitHubRepo:
+        Default: ReCiter
+        Description: 'The GitHub repository name'
+        Type: String
 Metadata:
-  AWS::CloudFormation::Interface:
-    ParameterGroups:
-      - Label:
-          default: "CodePipeline Settings"
-        Parameters:
-          - ProjectName
-      - Label:
-          default: "GitHub Settings"
-        Parameters:
-          - GitHubOwner
-          - GitHubRepo
+    'AWS::CloudFormation::Interface':
+        ParameterGroups:
+            -
+                Label:
+                    default: 'CodePipeline Settings'
+                Parameters:
+                    - ProjectName
+            -
+                Label:
+                    default: 'GitHub Settings'
+                Parameters:
+                    - GitHubOwner
+                    - GitHubRepo
 Resources:
-  ArtifactStoreBucket:
-    Type: AWS::S3::Bucket
-    Properties:
-      VersioningConfiguration:
-        Status: Enabled
-  Pipeline:
-    Type: AWS::CodePipeline::Pipeline
-    Properties:
-      ArtifactStore:
-        Location: !Ref 'ArtifactStoreBucket'
-        Type: S3
-      Name: ReCiter-TestCodePipeline
-      RoleArn: !GetAtt [PipelineRole, Arn]
-      Stages:
-        - Name: GitHubSource
-          Actions:
-            - Name: AppSource
-              ActionTypeId:
-                Category: Source
-                Owner: AWS
-                Provider: S3
-                Version: '1'
-              Configuration:
-                S3Bucket: 'github-to-s3-outputbucket'
-                S3ObjectKey: !Sub '${GitHubOwner}/${GitHubRepo}/${GitHubOwner}_${GitHubRepo}.zip'
-              OutputArtifacts:
-                - Name: AppSource
-              RunOrder: '1'
-        - Name: Build
-          Actions:
-            - Name: Build
-              ActionTypeId:
-                Category: Build
-                Owner: AWS
-                Provider: CodeBuild
-                Version: '1'
-              Configuration:
-                ProjectName: !Ref CodeBuildProject
-              InputArtifacts:
-                - Name: AppSource
-              RunOrder: '1'
-  CodeBuildProject:
-    Type: AWS::CodeBuild::Project
-    Properties:
-      Artifacts:
-        Type: CODEPIPELINE
-      Source:
-        Type: CODEPIPELINE
-      Environment:
-        ComputeType: BUILD_GENERAL1_SMALL
-        Image: aws/codebuild/docker:17.09.0
-        Type: LINUX_CONTAINER
-      Name: ReCiter-TestCodeBuild
-      ServiceRole:
-        Fn::GetAtt:
-        - CodeBuildRole
-        - Arn
-  PipelineRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Statement:
-        - Action: ['sts:AssumeRole']
-          Effect: Allow
-          Principal:
-            Service: [codepipeline.amazonaws.com]
-        Version: '2012-10-17'
-      Path: /
-      Policies:
-        - PolicyName: CodePipelineAccess
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Action:
-                - 's3:*'
-                - 'cloudformation:CreateStack'
-                - 'cloudformation:DescribeStacks'
-                - 'cloudformation:DeleteStack'
-                - 'cloudformation:UpdateStack'
-                - 'cloudformation:CreateChangeSet'
-                - 'cloudformation:ExecuteChangeSet'
-                - 'cloudformation:DeleteChangeSet'
-                - 'cloudformation:DescribeChangeSet'
-                - 'cloudformation:SetStackPolicy'
-                - 'iam:PassRole'
-                - 'sns:Publish'
-                - 'codebuild:*'
-                Effect: Allow
-                Resource: '*'
-  CodeBuildRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          Effect: Allow
-          Principal:
-            Service: codebuild.amazonaws.com
-          Action: sts:AssumeRole
-      ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/AdministratorAccess
+    ArtifactStoreBucket:
+        Type: 'AWS::S3::Bucket'
+        Properties:
+            VersioningConfiguration:
+                Status: Enabled
+    Pipeline:
+        Type: 'AWS::CodePipeline::Pipeline'
+        Properties:
+            Name: ReCiter-TestCodePipeline
+            RoleArn: !Sub ${PipelineRole.Arn}
+            ArtifactStore:
+                Type: S3
+                Location: github-to-s3-outputbucket
+            Stages:
+                -
+                    Name: GitHubSource
+                    Actions:
+                        -
+                            Name: AppSource
+                            ActionTypeId:
+                                Category: Source
+                                Owner: ThirdParty
+                                Provider: GitHub
+                                Version: 1
+                            Configuration:
+                                Owner: !Ref GitHubOwner
+                                Repo: !Ref GitHubRepo
+                                Branch: master
+                                OAuthToken: ca6625778d440f8309dafeee6125bc29cd8c5fee
+                            OutputArtifacts:
+                                -
+                                    Name: AppSource
+                            RunOrder: '1'
+                -
+                    Name: Build
+                    Actions:
+                        -
+                            Name: Build
+                            ActionTypeId:
+                                Category: Build
+                                Owner: AWS
+                                Provider: CodeBuild
+                                Version: '1'
+                            Configuration:
+                                ProjectName: ReCiter-TestCodeBuild
+                            InputArtifacts:
+                                -
+                                    Name: AppSource
+                            RunOrder: '1'
+    CodeBuildProject:
+        Type: 'AWS::CodeBuild::Project'
+        Properties:
+            Artifacts:
+                Type: CODEPIPELINE
+            Source:
+                Type: CODEPIPELINE
+            Environment:
+                ComputeType: BUILD_GENERAL1_SMALL
+                Image: 'aws/codebuild/docker:17.09.0'
+                Type: LINUX_CONTAINER
+            Name: ReCiter-TestCodeBuild
+            ServiceRole:
+                'Fn::GetAtt':
+                    - CodeBuildRole
+                    - Arn
+    PipelineRole:
+        Type: 'AWS::IAM::Role'
+        Properties:
+            AssumeRolePolicyDocument:
+                Statement:
+                    -
+                        Action:
+                            - 'sts:AssumeRole'
+                        Effect: Allow
+                        Principal:
+                            Service:
+                                - codepipeline.amazonaws.com
+                Version: '2012-10-17'
+            Path: /
+            Policies:
+                -
+                    PolicyName: CodePipelineAccess
+                    PolicyDocument:
+                        Version: '2012-10-17'
+                        Statement:
+                            -
+                                Action:
+                                    - 's3:*'
+                                    - 'cloudformation:CreateStack'
+                                    - 'cloudformation:DescribeStacks'
+                                    - 'cloudformation:DeleteStack'
+                                    - 'cloudformation:UpdateStack'
+                                    - 'cloudformation:CreateChangeSet'
+                                    - 'cloudformation:ExecuteChangeSet'
+                                    - 'cloudformation:DeleteChangeSet'
+                                    - 'cloudformation:DescribeChangeSet'
+                                    - 'cloudformation:SetStackPolicy'
+                                    - 'iam:PassRole'
+                                    - 'sns:Publish'
+                                    - 'codebuild:*'
+                                Effect: Allow
+                                Resource: '*'
+    CodeBuildRole:
+        Type: 'AWS::IAM::Role'
+        Properties:
+            AssumeRolePolicyDocument:
+                Version: '2012-10-17'
+                Statement:
+                    Effect: Allow
+                    Principal:
+                        Service: codebuild.amazonaws.com
+                    Action: 'sts:AssumeRole'
+            ManagedPolicyArns:
+                - 'arn:aws:iam::aws:policy/AdministratorAccess'
