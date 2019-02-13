@@ -7,6 +7,12 @@ AWS CloudFormation for ReCiter
 2. https://github.com/stelligent/cloudformation_templates/tree/master/labs/eb
 3. CodeBuild useful template: https://www.itonaut.com/2018/06/18/use-github-source-in-aws-codebuild-project-using-aws-cloudformation/
 
+##### CloudFormation Stacks:
+
+1. https://www.terraform.io/guides/index.html
+2. https://github.com/cloudtools/stacker
+3. https://github.com/cloudtools/troposphere
+
 #### Commonly Used Intrinsic Functions.
 
 ##### Fn:ImportValue
