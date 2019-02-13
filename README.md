@@ -5,6 +5,7 @@ AWS CloudFormation for ReCiter
 
 1. https://medium.com/boltops/why-generate-cloudformation-templates-with-lono-65b8ea5eb87d
 2. https://github.com/stelligent/cloudformation_templates/tree/master/labs/eb
+3. CodeBuild useful template: https://www.itonaut.com/2018/06/18/use-github-source-in-aws-codebuild-project-using-aws-cloudformation/
 
 #### Commonly Used Intrinsic Functions.
 
