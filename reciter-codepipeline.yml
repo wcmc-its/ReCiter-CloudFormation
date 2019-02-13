@@ -81,18 +81,24 @@ Resources:
         Type: 'AWS::CodeBuild::Project'
         Properties:
             Artifacts:
-                Type: CODEPIPELINE
+                Type: no_artifacts
             Source:
-                Type: CODEPIPELINE
+                Auth:
+                    Type: OAUTH
+                Type: GITHUB
+                Location: https://github.com/wcmc-its/ReCiter.git
             Environment:
                 ComputeType: BUILD_GENERAL1_SMALL
-                Image: 'aws/codebuild/docker:17.09.0'
+                Image: 'aws/codebuild/java:openjdk-8'
                 Type: LINUX_CONTAINER
             Name: ReCiter-TestCodeBuild
             ServiceRole:
                 'Fn::GetAtt':
                     - CodeBuildRole
                     - Arn
+            Triggers:
+                Webhook: true
+            TimeoutInMinutes: 10
     PipelineRole:
         Type: 'AWS::IAM::Role'
         Properties:

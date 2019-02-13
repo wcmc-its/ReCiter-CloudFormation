@@ -24,3 +24,8 @@ Usage: Returns the value of the specified parameter or resource.
 
 AWS CloudFormation requires at least 2 stages in the CodePipeline configuration when initializing a stack.
 
+2. CodeBuild Throws Error:
+```
+Failed to call UpdateProject, reason: Invalid type provided: Project source type (Service: AWSCodeBuild; Status Code: 400; Error Code: InvalidInputException; Request ID: b173239d-2f51-11e9-8d47-2333ebd6fde8)
+```
+Make sure that `Type: GITHUB` is all upper-cased. So "Github" or "GitHub" will not work.
