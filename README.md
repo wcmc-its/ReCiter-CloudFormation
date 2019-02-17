@@ -20,6 +20,14 @@ https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-functio
 
 Usage: Returns the value of an output exported by another stack. Typically used to create cross-stack references.
 
+##### Fn::Join
+Fn::Join:
+	- "-"
+    	- - elasticbeanstalk-samples
+       	  - Ref: AWS::Region
+
+Need to make sure that the last indentation is under the second "-" as shown above by the "Ref: AWS::Region".
+
 ##### Ref
 https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-ref.html
 

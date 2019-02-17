@@ -99,6 +99,45 @@ Resources:
             Triggers:
                 Webhook: true
             TimeoutInMinutes: 10
+    nodeApplication:
+        Type: AWS::ElasticBeanstalk::Application
+        Properties:
+            Name: ReCiter-Node-Application
+            Description: AWS Elastic Beanstalk Sample Application
+    nodeApplicationVersion:
+        Type: AWS::ElasticBeanstalk::ApplicationVersion
+        Properties:
+            ApplicationName:
+                Ref: nodeApplication
+            Description: AWS ElasticBeanstalk Sample Application Version
+            SourceBundle:
+                S3Bucket:
+                    Fn::Join:
+                        - "-"
+                        - - elasticbeanstalk-samples
+                          - Ref: AWS::Region
+                S3Key: nodejs-sample.zip
+    nodeConfigurationTemplate:
+        Type: AWS::ElasticBeanstalk::ConfigurationTemplate
+        Properties:
+            ApplicationName:
+                Ref: nodeApplication
+            Description: AWS ElasticBeanstalk Sample Configuration Template
+            SolutionStackName: '64bit Amazon Linux 2018.03 v2.7.4 running Java 8'
+    nodeEnvironment:
+        Type: AWS::ElasticBeanstalk::Environment
+        DependsOn:
+            - nodeApplication
+            - nodeConfigurationTemplate
+            - nodeApplicationVersion
+        Properties:
+            ApplicationName:
+                Ref: nodeApplication
+            Description: AWS ElasticBeanstalk Sample Node Environment
+            TemplateName:
+                Ref: nodeConfigurationTemplate
+            VersionLabel:
+                Ref: nodeApplicationVersion
     PipelineRole:
         Type: 'AWS::IAM::Role'
         Properties:
