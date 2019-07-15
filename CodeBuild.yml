@@ -1,0 +1,73 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CodeBuild CI
+Parameters:
+    BuildImage:
+        AllowedValues:
+            - 'aws/codebuild/ubuntu-base:14.04'
+            - 'aws/codebuild/android-java-8:24.4.1'
+            - 'aws/codebuild/android-java-7:24.4.1'
+            - 'aws/codebuild/android-java-6:24.4.1'
+            - 'aws/codebuild/docker:1.12.1'
+            - 'aws/codebuild/golang:1.7.3'
+            - 'aws/codebuild/golang:1.6.3'
+            - 'aws/codebuild/golang:1.5.4'
+            - 'aws/codebuild/java:openjdk-8'
+            - 'aws/codebuild/java:openjdk-7'
+            - 'aws/codebuild/java:openjdk-6'
+            - 'aws/codebuild/nodejs:7.0.0'
+            - 'aws/codebuild/nodejs:6.3.1'
+            - 'aws/codebuild/nodejs:5.12.0'
+            - 'aws/codebuild/nodejs:4.4.7'
+            - 'aws/codebuild/nodejs:4.3.2'
+            - 'aws/codebuild/python:3.5.2'
+            - 'aws/codebuild/python:3.4.5'
+            - 'aws/codebuild/python:3.3.6'
+            - 'aws/codebuild/python:2.7.12'
+            - 'aws/codebuild/ruby:2.3.1'
+            - 'aws/codebuild/ruby:2.2.5'
+            - 'aws/codebuild/ruby:2.1.10'
+            - 'aws/codebuild/dot-net:core-1'
+        Description: Docker Image to use in CodeBuild Project
+        Type: String
+    ProjectName:
+        AllowedPattern: '^[a-zA-Z0-9-_]*$'
+        Description: 'Name to give the CodeBuild Project. For this sample, use the same name as your repository.'
+        MaxLength: '255'
+        MinLength: '2'
+        Type: String
+    RepositoryUrl:
+        Description: "HTTPS Clone URL of the repository in GitHub. Example: 'https://github.com/owner/repo.git'"
+        Type: String
+Resources:
+    CodeBuildProject:
+        Type: 'AWS::CodeBuild::Project'
+        Properties:
+            Artifacts:
+                Type: NO_ARTIFACTS
+            Description: GitHub CI Build Project Sample
+            Environment:
+                ComputeType: BUILD_GENERAL1_SMALL
+                Image:
+                    Ref: BuildImage
+                Type: LINUX_CONTAINER
+            Name:
+                Ref: ProjectName
+            ServiceRole:
+                Fn::ImportValue: codebuild-service-role
+            Source:
+                Location:
+                    Ref: RepositoryUrl
+                Type: GITHUB
+                BuildSpec: 'buildspec.yml'
+            TimeoutInMinutes: 30
+            Tags: 
+              - 
+                Key: "venue"
+                Value: "reciter-workshop"
+Outputs:
+    CodeBuildName:
+        Description: CodeBuild project
+        Value:
+            Ref: CodeBuildProject
+        Export:
+          Name: !Sub ${AWS::StackName}-codebuildProjectName

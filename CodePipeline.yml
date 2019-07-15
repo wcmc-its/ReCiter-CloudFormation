@@ -1,0 +1,165 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CodePipline Sample Template
+Parameters:
+    ArtifactStoreBucket:
+        Description: S3 bucket to use for artifacts. Just bucket Name; not URL. IAM user should have access to the bucket.
+        Type: String
+        Default: codepipeline-us-east-1-XXXXXXXXXXX
+    PipelineName:
+        AllowedPattern: '^[a-zA-Z0-9-_]*$'
+        Description: 'Name to give the CodePipeline Project. For this sample, use the same name as your repository.'
+        MaxLength: '255'
+        MinLength: '2'
+        Type: String
+    GitHubUser:
+        Description: "GitHub UserName"
+        Type: String
+        Default: sarbajit
+    GitHubRepo:
+        Description: "GitHub Repo to pull from. Only the Name. not the URL"
+        Type: String
+        Default: reciter
+    GitHubBranch:
+        Description: "Branch to use from Repo. Only the Name. not the URL"
+        Type: String
+        Default: master
+    GitHubToken:
+        Description: "Secret. It might look something like 9b189a1654643522561f7b3ebd44a1531a4287af OAuthToken with access to Repo. Go to https://github.com/settings/tokens"
+        Type: String
+        NoEcho: true
+    DeployBeanstalkAppName:
+        Description: "ElasticBeanstalk application name to be used in the deploy process of pipeline"
+        Type: String
+    DeployBeanstalkEnvName:
+        Description: "ElasticBeanstalk environment name to be used in the deploy process of pipeline"
+        Type: String
+    CodePipelineServiceRole:
+        Description: This IAM role must have proper permissions to run the pipeline 
+        Type: String
+        Default: arn:aws:iam::123456789012:role/AWS-CodePipeline-Service
+        AllowedPattern: arn:aws(-[\w]+)*:iam::[0-9]{12}:role/.*
+    BuildImage:
+        AllowedValues:
+            - 'aws/codebuild/ubuntu-base:14.04'
+            - 'aws/codebuild/android-java-8:24.4.1'
+            - 'aws/codebuild/android-java-7:24.4.1'
+            - 'aws/codebuild/android-java-6:24.4.1'
+            - 'aws/codebuild/docker:1.12.1'
+            - 'aws/codebuild/golang:1.7.3'
+            - 'aws/codebuild/golang:1.6.3'
+            - 'aws/codebuild/golang:1.5.4'
+            - 'aws/codebuild/java:openjdk-8'
+            - 'aws/codebuild/java:openjdk-7'
+            - 'aws/codebuild/java:openjdk-6'
+            - 'aws/codebuild/nodejs:7.0.0'
+            - 'aws/codebuild/nodejs:6.3.1'
+            - 'aws/codebuild/nodejs:5.12.0'
+            - 'aws/codebuild/nodejs:4.4.7'
+            - 'aws/codebuild/nodejs:4.3.2'
+            - 'aws/codebuild/python:3.5.2'
+            - 'aws/codebuild/python:3.4.5'
+            - 'aws/codebuild/python:3.3.6'
+            - 'aws/codebuild/python:2.7.12'
+            - 'aws/codebuild/ruby:2.3.1'
+            - 'aws/codebuild/ruby:2.2.5'
+            - 'aws/codebuild/ruby:2.1.10'
+            - 'aws/codebuild/dot-net:core-1'
+        Description: Docker Image to use in CodeBuild Project
+        Type: String
+    ProjectName:
+        AllowedPattern: '^[a-zA-Z0-9-_]*$'
+        Description: 'Name to give the CodeBuild Project. For this sample, use the same name as your repository.'
+        MaxLength: '255'
+        MinLength: '2'
+        Type: String
+    RepositoryUrl:
+        Description: "HTTPS Clone URL of the repository in GitHub. Example: 'https://github.com/owner/repo.git'"
+        Type: String
+    S3Bucket:
+        Description: S3 Bucket name for cloudformation template for codebuild
+        Type: String
+    S3Key:
+        Description: S3 Key for cloudformation template for codebuild
+        Type: String
+Resources:
+    CodeBuildProject:
+      Type: AWS::CloudFormation::Stack
+      Properties:
+        TemplateURL: !Sub https://s3.amazonaws.com/${S3Bucket}/${S3Key}
+        Parameters:
+          BuildImage: !Ref BuildImage
+          ProjectName: !Ref ProjectName
+          RepositoryUrl: !Ref RepositoryUrl
+    AppPipeline:
+      Type: AWS::CodePipeline::Pipeline
+      DependsOn: CodeBuildProject
+      Properties:
+        Name: !Ref PipelineName
+        RoleArn: !Ref CodePipelineServiceRole
+        ArtifactStore:
+          Type: S3
+          Location: !Ref ArtifactStoreBucket
+        Stages: 
+          - 
+            Name: Source
+            Actions:
+              - 
+                Name: ApplicationSource
+                ActionTypeId:
+                  Category: Source
+                  Owner: ThirdParty
+                  Version: '1'
+                  Provider: GitHub
+                Configuration:
+                  Owner: !Ref GitHubUser
+                  Repo: !Ref GitHubRepo
+                  Branch: !Ref GitHubBranch
+                  OAuthToken: !Ref GitHubToken
+                OutputArtifacts:
+                  -
+                    Name: source-output-artifact
+                RunOrder: 1
+          -
+            Name: Build
+            Actions:
+              -
+                Name: CodeBuild
+                InputArtifacts: 
+                  -
+                    Name: source-output-artifact 
+                ActionTypeId:
+                  Category: Build
+                  Owner: AWS
+                  Version: '1'
+                  Provider: CodeBuild
+                Configuration:
+                  ProjectName: !Ref ProjectName
+                OutputArtifacts:
+                  -
+                    Name: build-output-artifact
+                RunOrder: 1
+          -
+            Name: Deploy
+            Actions:
+              -
+                Name: Deployment
+                InputArtifacts: 
+                  -
+                    Name: build-output-artifact
+                ActionTypeId:
+                  Category: Deploy
+                  Owner: AWS
+                  Version: '1'
+                  Provider: ElasticBeanstalk
+                Configuration:
+                  ApplicationName: !Ref DeployBeanstalkAppName
+                  EnvironmentName: !Ref DeployBeanstalkEnvName
+                RunOrder: 1
+        RestartExecutionOnUpdate: false
+Outputs:
+    CodeBuildName:
+        Description: CodePipeline Name
+        Value:
+            Ref: AppPipeline
+        Export:
+          Name: !Sub ${AWS::StackName}-AppPipelineName

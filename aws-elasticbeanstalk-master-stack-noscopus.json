@@ -1,0 +1,281 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Resources": {
+        "BaseNetworkStack": {
+            "Type": "AWS::CloudFormation::Stack",
+            "Properties": {
+                "TemplateURL": "https://s3.amazonaws.com/reciter-workshop/BaseNetworkStack.json",
+                "TimeoutInMinutes": 60,
+                "Tags": [
+                    {
+                        "Key": "StackName",
+                        "Value": {
+                            "Ref": "AWS::StackName"
+                        }
+                    },
+                    {
+                        "Key": "venue",
+                        "Value": "reciter-workshop"
+                    }
+                ]
+            }
+        },
+        "ElasticBeanStalkRoles": {
+            "Type": "AWS::CloudFormation::Stack",
+            "Properties": {
+                "TemplateURL": "https://s3.amazonaws.com/reciter-workshop/aws-elasticbeanstalk-roles.json",
+                "TimeoutInMinutes": 60,
+                "Tags": [
+                    {
+                        "Key": "StackName",
+                        "Value": {
+                            "Ref": "AWS::StackName"
+                        }
+                    },
+                    {
+                        "Key": "venue",
+                        "Value": "reciter-workshop"
+                    }
+                ]
+            }
+        },
+        "ElasticBeanstalkStackPubmed": {
+            "DependsOn": [
+                "BaseNetworkStack",
+                "ElasticBeanStalkRoles"
+            ],
+            "Type": "AWS::CloudFormation::Stack",
+            "Properties": {
+                "Parameters": {
+                    "elasticBeanStalkRoleStackName": {
+                        "Fn::GetAtt": [
+                            "ElasticBeanStalkRoles",
+                            "Outputs.rolestackName"
+                        ]
+                    },
+                    "NetworkStackName": {
+                        "Fn::GetAtt": [
+                            "BaseNetworkStack",
+                            "Outputs.NetworkStackName"
+                        ]
+                    },
+                    "ApplicationName": {
+                        "Ref": "ApplicationNamePubmed"
+                    },
+                    "EnvironmentName": {
+                        "Ref": "EnvironmentNamePubmed"
+                    },
+                    "ApplicationCNAME": {
+                        "Ref": "ApplicationCNAMEPubmed"
+                    },
+                    "ApplicationPubmedEnvPubmedApikey" : {
+                        "Ref": "ApplicationPubmedEnvPubmedApikey"
+                    }
+                },
+                "TemplateURL": "https://s3.amazonaws.com/reciter-workshop/aws-elasticbeanstalk-pubmed.json",
+                "TimeoutInMinutes": 60,
+                "Tags": [
+                    {
+                        "Key": "StackName",
+                        "Value": {
+                            "Ref": "AWS::StackName"
+                        }
+                    },
+                    {
+                        "Key": "venue",
+                        "Value": "reciter-workshop"
+                    }
+                ]
+            }
+        },
+        "ElasticBeanstalkStackReciter": {
+            "DependsOn": [
+                "BaseNetworkStack",
+                "ElasticBeanStalkRoles",
+                "ElasticBeanstalkStackPubmed"
+            ],
+            "Type": "AWS::CloudFormation::Stack",
+            "Properties": {
+                "Parameters": {
+                    "elasticBeanStalkRoleStackName": {
+                        "Fn::GetAtt": [
+                            "ElasticBeanStalkRoles",
+                            "Outputs.rolestackName"
+                        ]
+                    },
+                    "NetworkStackName": {
+                        "Fn::GetAtt": [
+                            "BaseNetworkStack",
+                            "Outputs.NetworkStackName"
+                        ]
+                    },
+                    "ApplicationName": {
+                        "Ref": "ApplicationNameReciter"
+                    },
+                    "EnvironmentName": {
+                        "Ref": "EnvironmentNameReciter"
+                    },
+                    "ApplicationCNAME": {
+                        "Ref": "ApplicationCNAMEReciter"
+                    },
+                    "ApplicationReciterEnvAMAZONAWSACCESSKEY" : {
+                        "Ref": "ApplicationReciterEnvAMAZONAWSACCESSKEY"
+                    },
+                    "ApplicationReciterEnvAMAZONAWSSECRETKEY" : {
+                        "Ref": "ApplicationReciterEnvAMAZONAWSSECRETKEY"
+                    },
+                    "ApplicationReciterEnvAMAZONDYNAMODBENDPOINT" : {
+                        "Ref": "ApplicationReciterEnvAMAZONDYNAMODBENDPOINT"
+                    },
+                    "ApplicationReciterEnvADMINAPIKEY" : {
+                        "Ref": "ApplicationReciterEnvADMINAPIKEY"
+                    },
+                    "ApplicationReciterEnvCONSUMERAPIKEY" : {
+                        "Ref": "ApplicationReciterEnvCONSUMERAPIKEY"
+                    },
+                    "ApplicationReciterEnvSERVERPORT" : {
+                        "Ref": "ApplicationReciterEnvSERVERPORT"
+                    },
+                    "ApplicationReciterEnvPUBMEDSERVICE" : {
+                        "Fn::GetAtt": [
+                            "ElasticBeanstalkStackPubmed",
+                            "Outputs.ReciterPubmedEndpointURL"
+                        ]
+                    }
+                },
+                "TemplateURL": "https://s3.amazonaws.com/reciter-workshop/aws-elasticbeanstalk-reciter.json",
+                "TimeoutInMinutes": 60,
+                "Tags": [
+                    {
+                        "Key": "StackName",
+                        "Value": {
+                            "Ref": "AWS::StackName"
+                        }
+                    },
+                    {
+                        "Key": "venue",
+                        "Value": "reciter-workshop"
+                    }
+                ]
+            }
+        }
+    },
+    "Outputs": {
+        "OutputFromElasticBeanstalkStackPubmed": {
+            "Value": {
+                "Fn::GetAtt": [
+                    "ElasticBeanstalkStackPubmed",
+                    "Outputs.ReciterPubmedEndpointURL"
+                ]
+            }
+        },
+        "OutputFromElasticBeanstalkStackReciter": {
+            "Value": {
+                "Fn::GetAtt": [
+                    "ElasticBeanstalkStackReciter",
+                    "Outputs.ReciterEndpointURL"
+                ]
+            }
+        }
+    },
+    "Parameters": {
+        "ApplicationNamePubmed": {
+            "Description": "Application name for the application",
+            "Type": "String",
+            "MinLength": 1,
+            "MaxLength": 255,
+            "AllowedPattern": "^[a-zA-Z][-a-zA-Z0-9]*$",
+            "Default": "ReCiterPubmedService"
+        },
+        "EnvironmentNamePubmed": {
+            "Description": "Environment name for the elastic beanstalk",
+            "Type": "String",
+            "MinLength": 1,
+            "MaxLength": 255,
+            "AllowedPattern": "^[a-zA-Z][-a-zA-Z0-9]*$",
+            "Default": "ReCiterPubmedService-env"
+        },
+        "ApplicationCNAMEPubmed": {
+            "Description": "CNAME for the application",
+            "Type": "String",
+            "MinLength": 1,
+            "MaxLength": 255,
+            "AllowedPattern": "^[a-zA-Z][-a-zA-Z0-9]*$",
+            "Default": "reciter-pubmed"
+        },
+        "ApplicationPubmedEnvPubmedApikey": {
+            "Description": "PUBMED_API_KEY environment variable for ReCiter Pubmed Retreival Tool",
+            "Type": "String",
+            "NoEcho": true
+        },
+        "ApplicationNameReciter": {
+            "Description": "Application name for the application",
+            "Type": "String",
+            "MinLength": 1,
+            "MaxLength": 255,
+            "AllowedPattern": "^[a-zA-Z][-a-zA-Z0-9]*$",
+            "Default": "ReCiterService"
+        },
+        "EnvironmentNameReciter": {
+            "Description": "Environment name for the elastic beanstalk",
+            "Type": "String",
+            "MinLength": 1,
+            "MaxLength": 255,
+            "AllowedPattern": "^[a-zA-Z][-a-zA-Z0-9]*$",
+            "Default": "ReCiterService-env"
+        },
+        "ApplicationCNAMEReciter": {
+            "Description": "CNAME for the application",
+            "Type": "String",
+            "MinLength": 1,
+            "MaxLength": 255,
+            "AllowedPattern": "^[a-zA-Z][-a-zA-Z0-9]*$",
+            "Default": "reciter"
+        },
+        "ApplicationReciterEnvAMAZONAWSACCESSKEY": {
+            "Description": "AMAZON_AWS_ACCESS_KEY environment variable for ReCiter Tool for dynamodb, s3 and sqs access",
+            "Type": "String",
+            "NoEcho": true
+        },
+        "ApplicationReciterEnvAMAZONAWSSECRETKEY": {
+            "Description": "AMAZON_AWS_SECRET_KEY environment variable for ReCiter Tool for dynamodb, s3 and sqs access",
+            "Type": "String",
+            "NoEcho": true
+        },
+        "ApplicationReciterEnvAMAZONDYNAMODBENDPOINT": {
+            "Description": "AMAZON_DYNAMODB_ENDPOINT environment variable for ReCiter Tool for dynamodb, s3 and sqs access",
+            "Type": "String"
+        },
+        "ApplicationReciterEnvPUBMEDSERVICE": {
+            "Description": "PUBMED_SERVICE environment variable for ReCiter Tool to access Pubmed retrieval tool",
+            "Type": "String"
+        },
+        "ApplicationReciterEnvSCOPUSSERVICE": {
+            "Description": "SCOPUS_SERVICE environment variable for ReCiter Tool to access Scopus retrieval tool",
+            "Type": "String"
+        },
+        "ApplicationReciterEnvADMINAPIKEY": {
+            "Description": "ADMIN_API_KEY environment variable for ReCiter Tool if security is enabled for Reciter",
+            "Type": "String",
+            "MinLength": 1,
+            "MaxLength": 255,
+            "AllowedPattern": "^[a-zA-Z][-a-zA-Z0-9]*$",
+            "Default": "admin",
+            "NoEcho": true
+        },
+        "ApplicationReciterEnvCONSUMERAPIKEY": {
+            "Description": "CONSUMER_API_KEY environment variable for ReCiter Tool if security is enabled for Reciter",
+            "Type": "String",
+            "MinLength": 1,
+            "MaxLength": 255,
+            "AllowedPattern": "^[a-zA-Z][-a-zA-Z0-9]*$",
+            "Default": "consumer",
+            "NoEcho": true
+        },
+        "ApplicationReciterEnvSERVERPORT": {
+            "Description": "SERVER_PORT environment variable for ReCiter Tool",
+            "Type": "Number",
+            "Default": "5000"
+        }
+    }
+}

@@ -1,0 +1,105 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Resources": {
+        "elasticBeanStalkAppRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "AssumeRolePolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": "ec2.amazonaws.com"
+                            },
+                            "Action": "sts:AssumeRole"
+                        }
+                    ]
+                },
+                "RoleName": {
+                    "Fn::Join": [
+                        "-",
+                        [
+                            {
+                                "Ref": "AWS::Region"
+                            },
+                            "elasticBeanStalkApp",
+                            "role"
+                        ]
+                    ]
+                },
+                "ManagedPolicyArns": [
+                    "arn:aws:iam::aws:policy/AWSElasticBeanstalkWebTier"
+                ]
+            }
+        },
+        "elasticBeanStalkServiceRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "AssumeRolePolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": "elasticbeanstalk.amazonaws.com"
+                            },
+                            "Action": "sts:AssumeRole",
+                            "Condition": {
+                                "StringEquals": {
+                                    "sts:ExternalId": "elasticbeanstalk"
+                                }
+                            }
+                        }
+                    ]
+                },
+                "RoleName": {
+                    "Fn::Join": [
+                        "-",
+                        [
+                            {
+                                "Ref": "AWS::Region"
+                            },
+                            "elasticBeanStalkService",
+                            "role"
+                        ]
+                    ]
+                },
+                "ManagedPolicyArns": [
+                    "arn:aws:iam::aws:policy/service-role/AWSElasticBeanstalkService",
+                    "arn:aws:iam::aws:policy/service-role/AWSElasticBeanstalkEnhancedHealth"
+                ]
+            }
+        }
+    },
+    "Outputs": {
+        "rolestackName": {
+            "Value": {
+                "Ref": "AWS::StackName"
+            },
+            "Export": {
+                "Name": "elasticbeanstalk-rolestackName"
+            }
+        },
+        "elasticBeanStalkWebServerRole": {
+            "Value": {
+                "Ref": "elasticBeanStalkAppRole"
+            },
+            "Export": {
+                "Name": {
+                    "Fn::Sub": "${AWS::StackName}-elasticBeanStalkWebServerRole"
+                }
+            }
+        },
+        "elasticBeanStalkServiceRole": {
+            "Value": {
+                "Ref": "elasticBeanStalkServiceRole"
+            },
+            "Export": {
+                "Name": {
+                    "Fn::Sub": "${AWS::StackName}-elasticBeanStalkServiceRole"
+                }
+            }
+        }
+    }
+}
