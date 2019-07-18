@@ -1,0 +1,23 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "CF Type Search",
+            "type": "shell",
+            "command": "open -a \"Google Chrome\" \"https://docs.aws.amazon.com/search/doc-search.html?searchPath=documentation-guide&searchQuery=%22${selectedText}%22&x=0&y=0&this_doc_product=AWS+CloudFormation&this_doc_guide=User+Guide&doc_locale=en_us#facet_doc_product=AWS%20CloudFormation&facet_doc_guide=User%20Guide\"",
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "never"
+            }
+        },
+        {
+            "label": "CF Resource List",
+            "type": "shell",
+            "command": "open -a \"Google Chrome\" \"https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html\"",
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "never"
+            }
+        }
+    ]
+}
