@@ -247,14 +247,30 @@
                         "Namespace": "aws:elasticbeanstalk:application:environment",
                         "OptionName": "PUBMED_SERVICE",
                         "Value": {
-                            "Ref": "ApplicationReciterEnvPUBMEDSERVICE"
+                            "Fn::If": [
+                                "HasApplicationReciterEnvPUBMEDSERVICE",
+                                {
+                                    "Ref": "ApplicationReciterEnvPUBMEDSERVICE"
+                                },
+                                {
+                                    "Ref": "AWS::NoValue"
+                                }
+                            ]
                         }
                     },
                     {
                         "Namespace": "aws:elasticbeanstalk:application:environment",
                         "OptionName": "SCOPUS_SERVICE",
                         "Value": {
-                            "Ref": "ApplicationReciterEnvSCOPUSSERVICE"
+                            "Fn::If": [
+                                "HasApplicationReciterEnvSCOPUSSERVICE",
+                                {
+                                    "Ref": "ApplicationReciterEnvSCOPUSSERVICE"
+                                },
+                                {
+                                    "Ref": "AWS::NoValue"
+                                }
+                            ]
                         }
                     },
                     {
@@ -386,6 +402,32 @@
             "Description": "SERVER_PORT environment variable for ReCiter Tool",
             "Type": "Number",
             "Default": "5000"
+        }
+    },
+    "Conditions": {
+        "HasApplicationReciterEnvSCOPUSSERVICE": {
+            "Fn::Not": [
+                {
+                    "Fn::Equals": [
+                        "",
+                        {
+                            "Ref": "ApplicationReciterEnvSCOPUSSERVICE"
+                        }
+                    ]
+                }
+            ]
+        },
+        "HasApplicationReciterEnvPUBMEDSERVICE": {
+            "Fn::Not": [
+                {
+                    "Fn::Equals": [
+                        "",
+                        {
+                            "Ref": "ApplicationReciterEnvPUBMEDSERVICE"
+                        }
+                    ]
+                }
+            ]
         }
     }
 }

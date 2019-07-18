@@ -350,8 +350,9 @@
             "NoEcho": true
         },
         "ApplicationReciterEnvAMAZONDYNAMODBENDPOINT": {
-            "Description": "AMAZON_DYNAMODB_ENDPOINT environment variable for ReCiter Tool for dynamodb, s3 and sqs access",
-            "Type": "String"
+            "Description": "AMAZON_DYNAMODB_ENDPOINT environment variable for ReCiter Tool for dynamodb. Replace the region with proper region that you want.",
+            "Type": "String",
+            "Default": "https://dynamodb.us-east-1.amazonaws.com"
         },
         "ApplicationReciterEnvPUBMEDSERVICE": {
             "Description": "PUBMED_SERVICE environment variable for ReCiter Tool to access Pubmed retrieval tool",
@@ -359,7 +360,8 @@
         },
         "ApplicationReciterEnvSCOPUSSERVICE": {
             "Description": "SCOPUS_SERVICE environment variable for ReCiter Tool to access Scopus retrieval tool",
-            "Type": "String"
+            "Type": "String",
+            "Default": "http://reciter-scopus.domain"
         },
         "ApplicationReciterEnvADMINAPIKEY": {
             "Description": "ADMIN_API_KEY environment variable for ReCiter Tool if security is enabled for Reciter",

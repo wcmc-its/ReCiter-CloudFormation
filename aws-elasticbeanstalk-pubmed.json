@@ -226,7 +226,15 @@
                         "Namespace": "aws:elasticbeanstalk:application:environment",
                         "OptionName": "PUBMED_API_KEY",
                         "Value": {
-                            "Ref": "ApplicationPubmedEnvPubmedApikey"
+                            "Fn::If": [
+                                "HasApplicationPubmedEnvPubmedApikey",
+                                {
+                                    "Ref": "ApplicationPubmedEnvPubmedApikey"
+                                },
+                                {
+                                    "Ref": "AWS::NoValue"
+                                }
+                            ]
                         }
                     }
                 ],
@@ -303,6 +311,20 @@
         "ApplicationPubmedEnvPubmedApikey": {
             "Description": "PUBMED_API_KEY environment variable for ReCiter Pubmed Retreival Tool",
             "Type": "String"
+        }
+    },
+    "Conditions": {
+        "HasApplicationPubmedEnvPubmedApikey": {
+            "Fn::Not": [
+                {
+                    "Fn::Equals": [
+                        "",
+                        {
+                            "Ref": "ApplicationPubmedEnvPubmedApikey"
+                        }
+                    ]
+                }
+            ]
         }
     }
 }
