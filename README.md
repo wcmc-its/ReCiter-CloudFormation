@@ -111,46 +111,43 @@ As the below installation instructions explain, you can choose to install a temp
 
 
 
-##### CloudFormation Resources
+## Additional reading and tools
 
-1. https://medium.com/boltops/why-generate-cloudformation-templates-with-lono-65b8ea5eb87d
-2. https://github.com/stelligent/cloudformation_templates/tree/master/labs/eb
-3. CodeBuild useful template: https://www.itonaut.com/2018/06/18/use-github-source-in-aws-codebuild-project-using-aws-cloudformation/
+### CloudFormation resources
 
-##### CloudFormation Stacks:
+- [Why Generate CloudFormation Templates with Lono](https://medium.com/boltops/why-generate-cloudformation-templates-with-lono-65b8ea5eb87d)
+- [Collection of AWS Elastic Beanstalk Solution CloudFormation Templates](https://github.com/stelligent/cloudformation_templates/tree/master/labs/eb)
+- [CodeBuild useful template](https://www.itonaut.com/2018/06/18/use-github-source-in-aws-codebuild-project-using-aws-cloudformation/)
 
-1. https://www.terraform.io/guides/index.html
-2. https://github.com/cloudtools/stacker
-3. https://github.com/cloudtools/troposphere
+### CloudFormation stacks
 
-#### Commonly Used Intrinsic Functions.
+- [Terraform Guides](https://www.terraform.io/guides/index.html)
+- [AWS CloudFormation Stack orchestrator/manager.](https://github.com/cloudtools/stacker)
+- [Troposphere - Python library to create AWS CloudFormation descriptions](https://github.com/cloudtools/troposphere)
 
-##### Fn:ImportValue
-https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-importvalue.html
+### Commonly used intrinsic fnctions
 
-Usage: Returns the value of an output exported by another stack. Typically used to create cross-stack references.
+AWS CloudFormation provides several built-in functions that help you manage your stacks. Use [intrinsic functions](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-ref.html) in your templates to assign values to properties that are not available until runtime.
 
-##### Fn::Join
-Fn::Join:
-	- "-"
-    	- - elasticbeanstalk-samples
-       	  - Ref: AWS::Region
+**[Fn::ImportValue](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-importvalue.html)**
 
-Need to make sure that the last indentation is under the second "-" as shown above by the "Ref: AWS::Region".
+- Usage: Returns the value of an output exported by another stack. Typically used to create cross-stack references.
 
-##### Ref
-https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-ref.html
-
-Usage: Returns the value of the specified parameter or resource.
-
-##### Common Errors
-
-1. Pipeline has only 1 stages. There should be a minimum of 2 stages in a pipeline (Service: AWSCodePipeline; Status Code: 400; Error Code: InvalidStructureException; Request ID: 87eedc5c-fa4b-4338-959f-e1e084c6a177)
-
-AWS CloudFormation requires at least 2 stages in the CodePipeline configuration when initializing a stack.
-
-2. CodeBuild Throws Error:
+**[Fn::Join](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-join.html)**
+- Usage: ensure that the last indentation is under the second "-" as shown above by the "Ref: AWS::Region".
 ```
-Failed to call UpdateProject, reason: Invalid type provided: Project source type (Service: AWSCodeBuild; Status Code: 400; Error Code: InvalidInputException; Request ID: b173239d-2f51-11e9-8d47-2333ebd6fde8)
+  - "-"
+    - - elasticbeanstalk-samples
+    - Ref: AWS::Region
 ```
-Make sure that `Type: GITHUB` is all upper-cased. So "Github" or "GitHub" will not work.
+
+
+### Common Errors
+
+#### Pipeline has only 1 stage. 
+- Problem: There should be a minimum of 2 stages in a pipeline (Service: AWSCodePipeline; Status Code: 400; Error Code: InvalidStructureException; Request ID: 87eedc5c-fa4b-4338-959f-e1e084c6a177)
+- Fix: AWS CloudFormation requires at least 2 stages in the CodePipeline configuration when initializing a stack.
+
+#### CodeBuild Throws Error
+- Problem: "Failed to call UpdateProject, reason: Invalid type provided: Project source type (Service: AWSCodeBuild; Status Code: 400; Error Code: InvalidInputException; Request ID: b173239d-2f51-11e9-8d47-2333ebd6fde8)"
+- Fix: Make sure that `Type: GITHUB` is all upper-cased. So "Github" or "GitHub" will not work.
