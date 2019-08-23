@@ -217,6 +217,52 @@
                     }
                 ]
             }
+        },
+        "ElasticBeanstalkStackReCiterPubManager": {
+            "DependsOn": [
+                "BaseNetworkStack",
+                "ElasticBeanStalkRoles"
+            ],
+            "Type": "AWS::CloudFormation::Stack",
+            "Properties": {
+                "Parameters": {
+                    "elasticBeanStalkRoleStackName": {
+                        "Fn::GetAtt": [
+                            "ElasticBeanStalkRoles",
+                            "Outputs.rolestackName"
+                        ]
+                    },
+                    "NetworkStackName": {
+                        "Fn::GetAtt": [
+                            "BaseNetworkStack",
+                            "Outputs.NetworkStackName"
+                        ]
+                    },
+                    "ApplicationName": {
+                        "Ref": "ApplicationNameReciterPubManager"
+                    },
+                    "EnvironmentName": {
+                        "Ref": "EnvironmentNameReciterPubManager"
+                    },
+                    "ApplicationCNAME": {
+                        "Ref": "ApplicationCNAMEReciterPubManager"
+                    }
+                },
+                "TemplateURL": "https://s3.amazonaws.com/reciter-workshop/aws-elasticbeanstalk-reciter-pub-manager.json",
+                "TimeoutInMinutes": 60,
+                "Tags": [
+                    {
+                        "Key": "StackName",
+                        "Value": {
+                            "Ref": "AWS::StackName"
+                        }
+                    },
+                    {
+                        "Key": "venue",
+                        "Value": "reciter-workshop"
+                    }
+                ]
+            }
         }
     },
     "Outputs": {
@@ -241,6 +287,14 @@
                 "Fn::GetAtt": [
                     "ElasticBeanstalkStackReciter",
                     "Outputs.ReciterEndpointURL"
+                ]
+            }
+        },
+        "OutputFromElasticBeanstalkStackReCiterPubManager": {
+            "Value": {
+                "Fn::GetAtt": [
+                    "ElasticBeanstalkStackReCiterPubManager",
+                    "Outputs.ReciterPubManagerPubmedEndpointURL"
                 ]
             }
         }
@@ -385,6 +439,30 @@
             "Description": "SERVER_PORT environment variable for ReCiter Tool",
             "Type": "Number",
             "Default": "5000"
+        },
+        "ApplicationNameReciterPubManager": {
+            "Description": "Application name for the application",
+            "Type": "String",
+            "MinLength": 1,
+            "MaxLength": 255,
+            "AllowedPattern": "^[a-zA-Z][-a-zA-Z0-9]*$",
+            "Default": "ReCiterPublicationManagerService"
+        },
+        "EnvironmentNameReciterPubManager": {
+            "Description": "Environment name for the elastic beanstalk",
+            "Type": "String",
+            "MinLength": 1,
+            "MaxLength": 255,
+            "AllowedPattern": "^[a-zA-Z][-a-zA-Z0-9]*$",
+            "Default": "ReCiterPublicationManagerService-env"
+        },
+        "ApplicationCNAMEReciterPubManager": {
+            "Description": "CNAME for the application",
+            "Type": "String",
+            "MinLength": 1,
+            "MaxLength": 255,
+            "AllowedPattern": "^[a-zA-Z][-a-zA-Z0-9]*$",
+            "Default": "reciter-pub-manager"
         }
     }
 }
