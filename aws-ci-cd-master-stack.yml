@@ -1,175 +1,219 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 Description: Master stack for CI/CD using CodePipeline
 Parameters:
-  S3BucketCodeBuild:
-        Description: S3 Bucket name for cloudformation template for AWS CodeBuild
-        Type: String
-        Default: reciter-workshop
-  S3KeyCodeBuild:
-      Description: S3 Key for cloudformation template for AWS CodeBuild
-      Type: String
-      Default: CodeBuild.yml
-  S3BucketCodePipeline:
-        Description: S3 Bucket name for cloudformation template for AWS CodePipeline
-        Type: String
-        Default: reciter-workshop
-  S3KeyCodePipeline:
-      Description: S3 Key for cloudformation template for AWS CodePipeline
-      Type: String
-      Default: CodePipeline.yml
-  ReciterPipelineName:
-        AllowedPattern: '^[a-zA-Z0-9-_]*$'
-        Description: 'Name to give the CodePipeline Project. For this sample, use the same name as your repository.'
-        MaxLength: '255'
-        MinLength: '2'
-        Type: String
-        Default: ReCiter
-  ReciterPubmedPipelineName:
-        AllowedPattern: '^[a-zA-Z0-9-_]*$'
-        Description: 'Name to give the CodePipeline Project. For this sample, use the same name as your repository.'
-        MaxLength: '255'
-        MinLength: '2'
-        Type: String
-        Default: ReCiterPubmed
-  ReciterScopusPipelineName:
-        AllowedPattern: '^[a-zA-Z0-9-_]*$'
-        Description: 'Name to give the CodePipeline Project. For this sample, use the same name as your repository.'
-        MaxLength: '255'
-        MinLength: '2'
-        Type: String
-        Default: ReCiterScopus
-  GitHubUser:
-        Description: "GitHub UserName"
-        Type: String
-        Default: sarbajitdutta
-  GitHubBranch:
-        Description: "Branch to use from Repo. Only the Name. not the URL"
-        Type: String
-        Default: master
-  ReciterGitHubRepo:
-        Description: "GitHub Repo to pull from. Only the Name. not the URL"
-        Type: String
-        Default: ReCiter
-  ReciterPubmedGitHubRepo:
-        Description: "GitHub Repo to pull from. Only the Name. not the URL"
-        Type: String
-        Default: ReCiter-PubMed-Retrieval-Tool
-  ReciterScopusGitHubRepo:
-        Description: "GitHub Repo to pull from. Only the Name. not the URL"
-        Type: String
-        Default: ReCiter-Scopus-Retrieval-Tool
-  GitHubToken:
-        Description: "Secret. It might look something like 9b189a1654643522561f7b3ebd44a1531a4287af OAuthToken with access to Repo. Go to https://github.com/settings/tokens"
-        Type: String
-        NoEcho: true
-  ReciterCodeBuildProjectName:
-        Description: "CodeBuild project name to be used in the build process of pipeline"
-        Type: String
-        Default: ReCiter
-  ReciterPubmedCodeBuildProjectName:
-        Description: "CodeBuild project name to be used in the build process of pipeline"
-        Type: String
-        Default: ReCiter-Pubmed
-  ReciterScopusCodeBuildProjectName:
-        Description: "CodeBuild project name to be used in the build process of pipeline"
-        Type: String
-        Default: ReCiter-Scopus
-  ReciterDeployBeanstalkAppName:
-        Description: "ElasticBeanstalk application name to be used in the deploy process of pipeline"
-        Type: String
-        Default: ReCiterService
-  ReciterPubmedDeployBeanstalkAppName:
-        Description: "ElasticBeanstalk application name to be used in the deploy process of pipeline"
-        Type: String
-        Default: ReCiterPubmedService
-  ReciterScopusDeployBeanstalkAppName:
-        Description: "ElasticBeanstalk application name to be used in the deploy process of pipeline"
-        Type: String
-        Default: ReCiterScopusService
-  ReciterDeployBeanstalkEnvName:
-        Description: "ElasticBeanstalk environment name to be used in the deploy process of pipeline"
-        Type: String
-        Default: ReCiterService-env
-  ReciterPubmedDeployBeanstalkEnvName:
-        Description: "ElasticBeanstalk environment name to be used in the deploy process of pipeline"
-        Type: String
-        Default: ReCiterPubmedService-env
-  ReciterScopusDeployBeanstalkEnvName:
-        Description: "ElasticBeanstalk environment name to be used in the deploy process of pipeline"
-        Type: String
-        Default: ReCiterScopusService-env
+      S3BucketCodeBuild:
+            Description: S3 Bucket name for cloudformation template for AWS CodeBuild
+            Type: String
+            Default: reciter-workshop
+      S3KeyCodeBuild:
+            Description: S3 Key for cloudformation template for AWS CodeBuild
+            Type: String
+            Default: CodeBuild.yml
+      S3BucketCodePipeline:
+            Description: S3 Bucket name for cloudformation template for AWS CodePipeline
+            Type: String
+            Default: reciter-workshop
+      S3KeyCodePipeline:
+            Description: S3 Key for cloudformation template for AWS CodePipeline
+            Type: String
+            Default: CodePipeline.yml
+      ReciterPipelineName:
+            AllowedPattern: "^[a-zA-Z0-9-_]*$"
+            Description: "Name to give the CodePipeline Project. For this sample, use the same name as your repository."
+            MaxLength: "255"
+            MinLength: "2"
+            Type: String
+            Default: ReCiter
+      ReciterPubmedPipelineName:
+            AllowedPattern: "^[a-zA-Z0-9-_]*$"
+            Description: "Name to give the CodePipeline Project. For this sample, use the same name as your repository."
+            MaxLength: "255"
+            MinLength: "2"
+            Type: String
+            Default: ReCiterPubmed
+      ReciterScopusPipelineName:
+            AllowedPattern: "^[a-zA-Z0-9-_]*$"
+            Description: "Name to give the CodePipeline Project. For this sample, use the same name as your repository."
+            MaxLength: "255"
+            MinLength: "2"
+            Type: String
+            Default: ReCiterScopus
+      ReciterPubManagerPipelineName:
+            AllowedPattern: "^[a-zA-Z0-9-_]*$"
+            Description: "Name to give the CodePipeline Project. For this sample, use the same name as your repository."
+            MaxLength: "255"
+            MinLength: "2"
+            Type: String
+            Default: ReCiterPubManager
+      GitHubUser:
+            Description: "GitHub UserName"
+            Type: String
+            Default: sarbajitdutta
+      GitHubBranch:
+            Description: "Branch to use from Repo. Only the Name. not the URL"
+            Type: String
+            Default: master
+      ReciterGitHubRepo:
+            Description: "GitHub Repo to pull from. Only the Name. not the URL"
+            Type: String
+            Default: ReCiter
+      ReciterPubmedGitHubRepo:
+            Description: "GitHub Repo to pull from. Only the Name. not the URL"
+            Type: String
+            Default: ReCiter-PubMed-Retrieval-Tool
+      ReciterScopusGitHubRepo:
+            Description: "GitHub Repo to pull from. Only the Name. not the URL"
+            Type: String
+            Default: ReCiter-Scopus-Retrieval-Tool
+      ReciterPubManagerGitHubRepo:
+            Description: "GitHub Repo to pull from. Only the Name. not the URL"
+            Type: String
+            Default: ReCiter-Publication-Manager
+      GitHubToken:
+            Description: "Secret. It might look something like 9b189a1654643522561f7b3ebd44a1531a4287af OAuthToken with access to Repo. Go to https://github.com/settings/tokens"
+            Type: String
+            NoEcho: true
+      ReciterCodeBuildProjectName:
+            Description: "CodeBuild project name to be used in the build process of pipeline"
+            Type: String
+            Default: ReCiter
+      ReciterPubmedCodeBuildProjectName:
+            Description: "CodeBuild project name to be used in the build process of pipeline"
+            Type: String
+            Default: ReCiter-Pubmed
+      ReciterScopusCodeBuildProjectName:
+            Description: "CodeBuild project name to be used in the build process of pipeline"
+            Type: String
+            Default: ReCiter-Scopus
+      ReciterPubManagerCodeBuildProjectName:
+            Description: "CodeBuild project name to be used in the build process of pipeline"
+            Type: String
+            Default: ReCiter-Publication-Manager
+      ReciterDeployBeanstalkAppName:
+            Description: "ElasticBeanstalk application name to be used in the deploy process of pipeline"
+            Type: String
+            Default: ReCiterService
+      ReciterPubmedDeployBeanstalkAppName:
+            Description: "ElasticBeanstalk application name to be used in the deploy process of pipeline"
+            Type: String
+            Default: ReCiterPubmedService
+      ReciterScopusDeployBeanstalkAppName:
+            Description: "ElasticBeanstalk application name to be used in the deploy process of pipeline"
+            Type: String
+            Default: ReCiterScopusService
+      ReciterPubManagerDeployBeanstalkAppName:
+            Description: "ElasticBeanstalk application name to be used in the deploy process of pipeline"
+            Type: String
+            Default: ReCiterPublicationManagerService
+      ReciterDeployBeanstalkEnvName:
+            Description: "ElasticBeanstalk environment name to be used in the deploy process of pipeline"
+            Type: String
+            Default: ReCiterService-env
+      ReciterPubmedDeployBeanstalkEnvName:
+            Description: "ElasticBeanstalk environment name to be used in the deploy process of pipeline"
+            Type: String
+            Default: ReCiterPubmedService-env
+      ReciterScopusDeployBeanstalkEnvName:
+            Description: "ElasticBeanstalk environment name to be used in the deploy process of pipeline"
+            Type: String
+            Default: ReCiterScopusService-env
+      ReciterPubManagerDeployBeanstalkEnvName:
+            Description: "ElasticBeanstalk environment name to be used in the deploy process of pipeline"
+            Type: String
+            Default: ReCiterPublicationManagerService-env
 
 Resources:
-  CIRoleStack:
-      Type: AWS::CloudFormation::Stack
-      Properties:
-        TemplateURL: https://s3.amazonaws.com/reciter-workshop/aws-ci-roles.yml
-  
-  ReCiterPipeline:
-      Type: AWS::CloudFormation::Stack
-      Properties:
-        TemplateURL: !Sub https://s3.amazonaws.com/${S3BucketCodePipeline}/${S3KeyCodePipeline}
-        Parameters:
-          BuildImage: aws/codebuild/java:openjdk-8
-          ProjectName: !Ref ReciterCodeBuildProjectName
-          RepositoryUrl: !Sub https://github.com/${GitHubUser}/${ReciterGitHubRepo}.git
-          S3Bucket: !Ref S3BucketCodeBuild
-          S3Key: !Ref S3KeyCodeBuild
-          ArtifactStoreBucket: !GetAtt CIRoleStack.Outputs.CodePipelineS3BucketName
-          PipelineName: !Ref ReciterPipelineName
-          GitHubUser: !Ref GitHubUser
-          GitHubRepo: !Ref ReciterGitHubRepo
-          GitHubBranch: !Ref GitHubBranch
-          GitHubToken: !Ref GitHubToken
-          DeployBeanstalkAppName: !Ref ReciterDeployBeanstalkAppName
-          DeployBeanstalkEnvName: !Ref ReciterDeployBeanstalkEnvName
-          CodePipelineServiceRole: !GetAtt CIRoleStack.Outputs.CodePipelineRoleNameArn
+      CIRoleStack:
+            Type: AWS::CloudFormation::Stack
+            Properties:
+                  TemplateURL: https://s3.amazonaws.com/reciter-workshop/aws-ci-roles.yml
 
-  ReCiterPubmedPipeline:
-      Type: AWS::CloudFormation::Stack
-      Properties:
-        TemplateURL: !Sub https://s3.amazonaws.com/${S3BucketCodePipeline}/${S3KeyCodePipeline}
-        Parameters:
-          BuildImage: aws/codebuild/java:openjdk-8
-          ProjectName: !Ref ReciterPubmedCodeBuildProjectName
-          RepositoryUrl: !Sub https://github.com/${GitHubUser}/${ReciterPubmedGitHubRepo}.git
-          S3Bucket: !Ref S3BucketCodeBuild
-          S3Key: !Ref S3KeyCodeBuild
-          ArtifactStoreBucket: !GetAtt CIRoleStack.Outputs.CodePipelineS3BucketName
-          PipelineName: !Ref ReciterPubmedPipelineName
-          GitHubUser: !Ref GitHubUser
-          GitHubRepo: !Ref ReciterPubmedGitHubRepo
-          GitHubBranch: !Ref GitHubBranch
-          GitHubToken: !Ref GitHubToken
-          DeployBeanstalkAppName: !Ref ReciterPubmedDeployBeanstalkAppName
-          DeployBeanstalkEnvName: !Ref ReciterPubmedDeployBeanstalkEnvName
-          CodePipelineServiceRole: !GetAtt CIRoleStack.Outputs.CodePipelineRoleNameArn
+      ReCiterPipeline:
+            Type: AWS::CloudFormation::Stack
+            Properties:
+                  TemplateURL: !Sub https://s3.amazonaws.com/${S3BucketCodePipeline}/${S3KeyCodePipeline}
+                  Parameters:
+                        BuildImage: aws/codebuild/java:openjdk-8
+                        ProjectName: !Ref ReciterCodeBuildProjectName
+                        RepositoryUrl: !Sub https://github.com/${GitHubUser}/${ReciterGitHubRepo}.git
+                        S3Bucket: !Ref S3BucketCodeBuild
+                        S3Key: !Ref S3KeyCodeBuild
+                        ArtifactStoreBucket: !GetAtt CIRoleStack.Outputs.CodePipelineS3BucketName
+                        PipelineName: !Ref ReciterPipelineName
+                        GitHubUser: !Ref GitHubUser
+                        GitHubRepo: !Ref ReciterGitHubRepo
+                        GitHubBranch: !Ref GitHubBranch
+                        GitHubToken: !Ref GitHubToken
+                        DeployBeanstalkAppName: !Ref ReciterDeployBeanstalkAppName
+                        DeployBeanstalkEnvName: !Ref ReciterDeployBeanstalkEnvName
+                        CodePipelineServiceRole: !GetAtt CIRoleStack.Outputs.CodePipelineRoleNameArn
 
-  ReCiterScopusPipeline:
-      Type: AWS::CloudFormation::Stack
-      Properties:
-        TemplateURL: !Sub https://s3.amazonaws.com/${S3BucketCodePipeline}/${S3KeyCodePipeline}
-        Parameters:
-          BuildImage: aws/codebuild/java:openjdk-8
-          ProjectName: !Ref ReciterScopusCodeBuildProjectName
-          RepositoryUrl: !Sub https://github.com/${GitHubUser}/${ReciterScopusGitHubRepo}.git
-          S3Bucket: !Ref S3BucketCodeBuild
-          S3Key: !Ref S3KeyCodeBuild
-          ArtifactStoreBucket: !GetAtt CIRoleStack.Outputs.CodePipelineS3BucketName
-          PipelineName: !Ref ReciterScopusPipelineName
-          GitHubUser: !Ref GitHubUser
-          GitHubRepo: !Ref ReciterScopusGitHubRepo
-          GitHubBranch: !Ref GitHubBranch
-          GitHubToken: !Ref GitHubToken
-          DeployBeanstalkAppName: !Ref ReciterScopusDeployBeanstalkAppName
-          DeployBeanstalkEnvName: !Ref ReciterScopusDeployBeanstalkEnvName
-          CodePipelineServiceRole: !GetAtt CIRoleStack.Outputs.CodePipelineRoleNameArn
+      ReCiterPubmedPipeline:
+            Type: AWS::CloudFormation::Stack
+            Properties:
+                  TemplateURL: !Sub https://s3.amazonaws.com/${S3BucketCodePipeline}/${S3KeyCodePipeline}
+                  Parameters:
+                        BuildImage: aws/codebuild/java:openjdk-8
+                        ProjectName: !Ref ReciterPubmedCodeBuildProjectName
+                        RepositoryUrl: !Sub https://github.com/${GitHubUser}/${ReciterPubmedGitHubRepo}.git
+                        S3Bucket: !Ref S3BucketCodeBuild
+                        S3Key: !Ref S3KeyCodeBuild
+                        ArtifactStoreBucket: !GetAtt CIRoleStack.Outputs.CodePipelineS3BucketName
+                        PipelineName: !Ref ReciterPubmedPipelineName
+                        GitHubUser: !Ref GitHubUser
+                        GitHubRepo: !Ref ReciterPubmedGitHubRepo
+                        GitHubBranch: !Ref GitHubBranch
+                        GitHubToken: !Ref GitHubToken
+                        DeployBeanstalkAppName: !Ref ReciterPubmedDeployBeanstalkAppName
+                        DeployBeanstalkEnvName: !Ref ReciterPubmedDeployBeanstalkEnvName
+                        CodePipelineServiceRole: !GetAtt CIRoleStack.Outputs.CodePipelineRoleNameArn
+
+      ReCiterScopusPipeline:
+            Type: AWS::CloudFormation::Stack
+            Properties:
+                  TemplateURL: !Sub https://s3.amazonaws.com/${S3BucketCodePipeline}/${S3KeyCodePipeline}
+                  Parameters:
+                        BuildImage: aws/codebuild/java:openjdk-8
+                        ProjectName: !Ref ReciterScopusCodeBuildProjectName
+                        RepositoryUrl: !Sub https://github.com/${GitHubUser}/${ReciterScopusGitHubRepo}.git
+                        S3Bucket: !Ref S3BucketCodeBuild
+                        S3Key: !Ref S3KeyCodeBuild
+                        ArtifactStoreBucket: !GetAtt CIRoleStack.Outputs.CodePipelineS3BucketName
+                        PipelineName: !Ref ReciterScopusPipelineName
+                        GitHubUser: !Ref GitHubUser
+                        GitHubRepo: !Ref ReciterScopusGitHubRepo
+                        GitHubBranch: !Ref GitHubBranch
+                        GitHubToken: !Ref GitHubToken
+                        DeployBeanstalkAppName: !Ref ReciterScopusDeployBeanstalkAppName
+                        DeployBeanstalkEnvName: !Ref ReciterScopusDeployBeanstalkEnvName
+                        CodePipelineServiceRole: !GetAtt CIRoleStack.Outputs.CodePipelineRoleNameArn
+
+      ReCiterPubManagerPipeline:
+            Type: AWS::CloudFormation::Stack
+            Properties:
+                  TemplateURL: !Sub https://s3.amazonaws.com/${S3BucketCodePipeline}/${S3KeyCodePipeline}
+                  Parameters:
+                        BuildImage: aws/codebuild/standard:1.0
+                        ProjectName: !Ref ReciterPubManagerCodeBuildProjectName
+                        RepositoryUrl: !Sub https://github.com/${GitHubUser}/${ReciterPubManagerGitHubRepo}.git
+                        S3Bucket: !Ref S3BucketCodeBuild
+                        S3Key: !Ref S3KeyCodeBuild
+                        ArtifactStoreBucket: !GetAtt CIRoleStack.Outputs.CodePipelineS3BucketName
+                        PipelineName: !Ref ReciterPubManagerPipelineName
+                        GitHubUser: !Ref GitHubUser
+                        GitHubRepo: !Ref ReciterPubManagerGitHubRepo
+                        GitHubBranch: !Ref GitHubBranch
+                        GitHubToken: !Ref GitHubToken
+                        DeployBeanstalkAppName: !Ref ReciterPubManagerDeployBeanstalkAppName
+                        DeployBeanstalkEnvName: !Ref ReciterPubManagerDeployBeanstalkEnvName
+                        CodePipelineServiceRole: !GetAtt CIRoleStack.Outputs.CodePipelineRoleNameArn
 
 Outputs:
-
-  ReCiterProjectName:
-    Value: !Ref ReCiterPipeline
-  ReCiterPubmedProjectName:
-    Value: !Ref ReCiterPubmedPipeline
-  ReCiterScopusProjectName:
-    Value: !Ref ReCiterScopusPipeline
+      ReCiterProjectName:
+            Value: !Ref ReCiterPipeline
+      ReCiterPubmedProjectName:
+            Value: !Ref ReCiterPubmedPipeline
+      ReCiterScopusProjectName:
+            Value: !Ref ReCiterScopusPipeline
+      ReCiterPubManagerProjectName:
+            Value: !Ref ReCiterPubManagerPipeline

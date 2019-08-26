@@ -64,6 +64,7 @@ Parameters:
             - 'aws/codebuild/ruby:2.2.5'
             - 'aws/codebuild/ruby:2.1.10'
             - 'aws/codebuild/dot-net:core-1'
+            - 'aws/codebuild/standard:1.0'
         Description: Docker Image to use in CodeBuild Project
         Type: String
     ProjectName:
