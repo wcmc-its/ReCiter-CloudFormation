@@ -46,15 +46,15 @@ As the below installation instructions explain, you can choose to install a temp
    ![add user](/files/image1.png)
    1. You may choose to enter either:
       1. "No Scopus" template - https://reciter-workshop.s3.amazonaws.com/aws-elasticbeanstalk-master-stack-noscopus.json
-      1. "Scopus" template - Should we include this???
+      1. Includes "Scopus" template(use if you have scopus subscription and have its api-key and insttoken) - https://reciter-workshop.s3.amazonaws.com/aws-elasticbeanstalk-master-stack.json
    1. Click on `Next` 
    1. Enter a name for the stack, e.g., `reciter-workshop-master-stack`
-   1. For `ApplicationPubmedEnvPubmedApikey`, use `9ab81e95f12df169b4e40c02719f76db8308`
+   1. For `ApplicationPubmedEnvPubmedApikey`, use `9ab81e95f12df169b4e40c02719f76db8308`. Although we recommend getting your own api key from Pubmed website
    1. For `ApplicationReciterEnvAMAZONAWSACCESSKEY` and `ApplicationReciterEnvAMAZONAWSSECRETKEY`, give the keys you created in IAM user.
    1. Enter DNS names for the ApplicationCNAMEPubmed and ApplicationCNAMEReciter fields.
       1. DNS names must be regionally unique.
       1. To verify a DNS is available, enter the following in Terminal where <profile-name> is your proposed DNS name:
-      `aws elasticbeanstalk check-dns-availability --cname-prefix reciter-pubmed-szd2013 --profile <profile-name>` ???
+      `aws elasticbeanstalk check-dns-availability --cname-prefix <your preferred dns prefix> --profile <profile-name>` ???
       1. Suggestion: to avoid conflicts, include your personal institutional ID.
    1. Click `Next`, and add tags. These tags will be attached to all the resources that are created with this stack.
    1. Check the two acknowledge boxes and click "Create stack.
@@ -83,13 +83,19 @@ As the below installation instructions explain, you can choose to install a temp
    1. Click `Commit`
 1. Fork the ReCiter-Pubmed-Retrieval tool repository to you personal GitHub account.
    1. Go to the [ReCiter PubMed Retrieval Tool](https://github.com/wcmc-its/ReCiter-PubMed-Retrieval-Tool).
-   1. Go to the [ReCiter repository](https://github.com/wcmc-its/ReCiter).
-   1. Click on the `Fork` button.      
+1. Fork the ReCiter-Scopus-Retrieval-Tool repository to you personal GitHub account. Do this if you have used the cloudformation template with scopus included and also if you have valid scopus subscription.
+   1. Go to the [Scopus repository](https://github.com/wcmc-its/ReCiter-Scopus-Retrieval-Tool)
+1. Fork the ReCiter-Publication-Manager repository to you personal GitHub account.
+   1. Go to the [ReCiter publication manager repository](https://github.com/wcmc-its/ReCiter-Publication-Manager)
+   1. Click on the `Fork` button. 
+   1. Go to the local,js file as it is forked on your personal account as located here: 
+   `https://github.com/<your-github-username>/ReCiter-Publication-Manager/blob/master/config/local.js`
+   1. Edit the file and put your reciter endpoint and reciter-pubmed endpoint that you specified as the CNAME prefix in the previous cloudformation template. Those endpoint will be used by the application to manage the publication data. Also make sure the adminApikey is also the same as specified in the previous master cloudformation template.
 1. Import the CI/CD (continuous integration/delivery) CloudFormation template in AWS console
    1. Before we proceed, we need to verify that the Reciter-PubMed CloudFormation template has been competely installed. In [CloudFormation home](https://console.aws.amazon.com/cloudformation/home), ensure that you see the `UPDATE_COMPLETE` status message for the Reciter-PubMed CloudFormation template. If this installation is not complete, wait until it is.
    1. At the [AWS cloudformation console](https://console.aws.amazon.com/cloudformation/home), click on `Create stack`.
    1. Enter the S3 URL we will be using: 
-  `https://reciter-workshop.s3.amazonaws.com/aws-ci-cd-master-stack-noscopus.yml`
+  `https://reciter-workshop.s3.amazonaws.com/aws-ci-cd-master-stack-noscopus.yml` or `https://reciter-workshop.s3.amazonaws.com/aws-ci-cd-master-stack.yml` if you have scopus subscription.
    ![add user](/files/image9.png)
    1. Click on `Next`
    1. Enter a stack name: `reciter-ci-cd`
@@ -101,7 +107,8 @@ As the below installation instructions explain, you can choose to install a temp
    1. Wait for stack to finish by looking for the `UPDATE_COMPLETE` status message.
 1. Use ReCiter in production.
    1. Visit the [CodePipeline service](https://console.aws.amazon.com/codesuite/codepipeline/pipelines).
-   1. If the stack has finished installing, you should see two pipelines: ReCiter and ReCiterPubmed.
+   1. If the stack has finished installing, you should see three pipelines: ReCiter and ReCiterPubmed and ReCiterPublicationManager. You will see four pipelines additionally ReCiterScopus if you used the template with Scopus.
+   1. You can check the status of each pipeline as it goes through the process.
    1. Click on ReCiter. As you can see, it is pulling the changes for our source repository and then building the application. You can click on `Details` in the Build section to  see live logs of the build process
    1. When the build is complete, go the URL for ReCiter.	
    1. Use the CNAME you entered above for ReCiter, and go to a URL that has this general form: 
