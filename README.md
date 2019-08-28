@@ -53,8 +53,8 @@ As the below installation instructions explain, you can choose to install a temp
    1. For `ApplicationReciterEnvAMAZONAWSACCESSKEY` and `ApplicationReciterEnvAMAZONAWSSECRETKEY`, give the keys you created in IAM user.
    1. Enter DNS names for the ApplicationCNAMEPubmed and ApplicationCNAMEReciter fields.
       1. DNS names must be regionally unique.
-      1. To verify a DNS is available, enter the following in Terminal where <profile-name> is your proposed DNS name:
-      `aws elasticbeanstalk check-dns-availability --cname-prefix <your preferred dns prefix> --profile <profile-name>` ???
+      1. To verify a DNS is available, enter the following in Terminal where <profile-name> is your profile name that you setup in previous step and include your preferred dns prefix:
+      `aws elasticbeanstalk check-dns-availability --cname-prefix <your preferred dns prefix> --profile <profile-name>`
       1. Suggestion: to avoid conflicts, include your personal institutional ID.
    1. Click `Next`, and add tags. These tags will be attached to all the resources that are created with this stack.
    1. Check the two acknowledge boxes and click "Create stack.
@@ -114,7 +114,15 @@ As the below installation instructions explain, you can choose to install a temp
    1. Use the CNAME you entered above for ReCiter, and go to a URL that has this general form: 
    `http://<cname>.<region>.elasticbeanstalk.com/swagger-ui.html`
    1. If you have trouble finding this URL, go [here](https://console.aws.amazon.com/elasticbeanstalk/home) and click on ReCiterService 
-   1. You can do the same for the ReCiter Pubmed Service.
+   1. You can do the same for the ReCiter Pubmed Service and other services that we created.
+1. Teardown of resources - When you are finished experimenting with or using your AWS account, you should clean up the resources associated with it to avoid incurring charges for resources that you are not using.
+   1. Optional: go to [CloudWatch](https://console.aws.amazon.com/cloudwatch/) and see which services are being used.
+   1. Empty any S3 buckets that have been created [here](https://console.aws.amazon.com/s3/). There will be one created for codepipeline with bucket name codepipeline-<your-region>-<account-number> e.g. codepipeline-us-east-1-<account number>. Use the console to empty it or you can use the terminal to delete it as well using `aws s3 rm s3://<bucket-name> --recursive --profile <profile-name>`
+   1. Select the “master” version of any CloudFormation stacks and delete them [Cloudformation](https://console.aws.amazon.com/cloudformation/). Delete cannot proceed if your setup is still using services. This may take several minutes.
+   1. Wait for delete to be completed. When it is completed, it should say “No stacks.”
+   1. Go to [DynamoDB console](https://console.aws.amazon.com/dynamodb/). Delete all the tables one by one by clicking on delete table button.
+   1. Voila you have deleted all your resources and should have an empty account.
+ 
 
 
 
