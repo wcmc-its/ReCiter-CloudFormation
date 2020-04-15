@@ -81,7 +81,7 @@
                 "CNAMEPrefix": {
                     "Ref": "ApplicationCNAME"
                 },
-                "SolutionStackName": "64bit Amazon Linux 2018.03 v2.9.1 running Java 8",
+                "SolutionStackName": "64bit Amazon Linux 2018.03 v2.10.4 running Java 8",
                 "OptionSettings": [
                     {
                         "Namespace": "aws:elasticbeanstalk:environment:process:default",
