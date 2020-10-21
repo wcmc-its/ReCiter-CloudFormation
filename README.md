@@ -82,7 +82,7 @@ As the below installation instructions explain, you can choose to install a temp
    1. Under commit message, enter `Dynamic bucket generation`. 
    1. Click `Commit`
    1. Edit the file and find `aws.dynamodb.settings.region` and set that to appropriate region you want all your dynamodb tables to be:
-   for e.g. if you are in us-east-1(N. Virginia) `aws.s3.use.dynamic.bucketName=us-east-1`
+   for e.g. if you are in us-east-1(N. Virginia) `aws.dynamodb.settings.region=us-east-1`
    1. If you dont want to use scopus then ddit the file and find `use.scopus.articles` and set that to false:
    `use.scopus.articles=false`
    1. Under commit message, enter `set dynamodb region and scopus flag`. 
