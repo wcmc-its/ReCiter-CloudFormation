@@ -81,6 +81,12 @@ As the below installation instructions explain, you can choose to install a temp
    `aws.s3.use.dynamic.bucketName=true`
    1. Under commit message, enter `Dynamic bucket generation`. 
    1. Click `Commit`
+   1. Edit the file and find `aws.dynamodb.settings.region` and set that to appropriate region you want all your dynamodb tables to be:
+   for e.g. if you are in us-east-1(N. Virginia) `aws.s3.use.dynamic.bucketName=us-east-1`
+   1. If you dont want to use scopus then ddit the file and find `use.scopus.articles` and set that to false:
+   `use.scopus.articles=false`
+   1. Under commit message, enter `set dynamodb region and scopus flag`. 
+   1. Click `Commit`
 1. Fork the ReCiter-Pubmed-Retrieval tool repository to you personal GitHub account.
    1. Go to the [ReCiter PubMed Retrieval Tool](https://github.com/wcmc-its/ReCiter-PubMed-Retrieval-Tool).
 1. Fork the ReCiter-Scopus-Retrieval-Tool repository to you personal GitHub account. Do this if you have used the cloudformation template with scopus included and also if you have valid scopus subscription.
@@ -122,47 +128,3 @@ As the below installation instructions explain, you can choose to install a temp
    1. Wait for delete to be completed. When it is completed, it should say “No stacks.”
    1. Go to [DynamoDB console](https://console.aws.amazon.com/dynamodb/). Delete all the tables one by one by clicking on delete table button.
    1. Voila you have deleted all your resources and should have an empty account.
- 
-
-
-
-## Additional reading and tools
-
-### CloudFormation resources
-
-- [Why Generate CloudFormation Templates with Lono](https://medium.com/boltops/why-generate-cloudformation-templates-with-lono-65b8ea5eb87d)
-- [Collection of AWS Elastic Beanstalk Solution CloudFormation Templates](https://github.com/stelligent/cloudformation_templates/tree/master/labs/eb)
-- [CodeBuild useful template](https://www.itonaut.com/2018/06/18/use-github-source-in-aws-codebuild-project-using-aws-cloudformation/)
-
-### CloudFormation stacks
-
-- [Terraform Guides](https://www.terraform.io/guides/index.html)
-- [AWS CloudFormation Stack orchestrator/manager.](https://github.com/cloudtools/stacker)
-- [Troposphere - Python library to create AWS CloudFormation descriptions](https://github.com/cloudtools/troposphere)
-
-### Commonly used intrinsic fnctions
-
-AWS CloudFormation provides several built-in functions that help you manage your stacks. Use [intrinsic functions](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-ref.html) in your templates to assign values to properties that are not available until runtime.
-
-**[Fn::ImportValue](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-importvalue.html)**
-
-- Usage: Returns the value of an output exported by another stack. Typically used to create cross-stack references.
-
-**[Fn::Join](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-join.html)**
-- Usage: ensure that the last indentation is under the second "-" as shown above by the "Ref: AWS::Region".
-```
-  - "-"
-    - - elasticbeanstalk-samples
-    - Ref: AWS::Region
-```
-
-
-### Common Errors
-
-#### Pipeline has only 1 stage. 
-- Problem: There should be a minimum of 2 stages in a pipeline (Service: AWSCodePipeline; Status Code: 400; Error Code: InvalidStructureException; Request ID: 87eedc5c-fa4b-4338-959f-e1e084c6a177)
-- Fix: AWS CloudFormation requires at least 2 stages in the CodePipeline configuration when initializing a stack.
-
-#### CodeBuild Throws Error
-- Problem: "Failed to call UpdateProject, reason: Invalid type provided: Project source type (Service: AWSCodeBuild; Status Code: 400; Error Code: InvalidInputException; Request ID: b173239d-2f51-11e9-8d47-2333ebd6fde8)"
-- Fix: Make sure that `Type: GITHUB` is all upper-cased. So "Github" or "GitHub" will not work.
