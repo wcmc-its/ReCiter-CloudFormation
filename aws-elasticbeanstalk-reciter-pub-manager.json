@@ -81,7 +81,7 @@
                 "CNAMEPrefix": {
                     "Ref": "ApplicationCNAME"
                 },
-                "SolutionStackName": "64bit Amazon Linux 2018.03 v4.17.1 running Node.js",
+                "SolutionStackName": "64bit Amazon Linux 2 v5.2.4 running Node.js 10",
                 "OptionSettings": [
                     {
                         "Namespace": "aws:elasticbeanstalk:container:nodejs",
