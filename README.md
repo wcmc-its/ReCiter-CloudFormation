@@ -112,7 +112,7 @@ As the below installation instructions explain, you can choose to install a temp
    1. Click on ReCiter. As you can see, it is pulling the changes for our source repository and then building the application. You can click on `Details` in the Build section to  see live logs of the build process
    1. When the build is complete, go the URL for ReCiter.	
    1. Use the CNAME you entered above for ReCiter, and go to a URL that has this general form: 
-   `http://<cname>.<region>.elasticbeanstalk.com/swagger-ui.html`
+   `http://<cname>.<region>.elasticbeanstalk.com/swagger-ui/index.html`
    1. If you have trouble finding this URL, go [here](https://console.aws.amazon.com/elasticbeanstalk/home) and click on ReCiterService 
    1. You can do the same for the ReCiter Pubmed Service and other services that we created.
 1. Teardown of resources - When you are finished experimenting with or using your AWS account, you should clean up the resources associated with it to avoid incurring charges for resources that you are not using.
