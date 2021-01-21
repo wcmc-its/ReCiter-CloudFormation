@@ -110,7 +110,7 @@ Resources:
             Properties:
                   TemplateURL: !Sub https://s3.amazonaws.com/${S3BucketCodePipeline}/${S3KeyCodePipeline}
                   Parameters:
-                        BuildImage: aws/codebuild/java:openjdk-8
+                        BuildImage: aws/codebuild/standard:3.0
                         ProjectName: !Ref ReciterCodeBuildProjectName
                         RepositoryUrl: !Sub https://github.com/${GitHubUser}/${ReciterGitHubRepo}.git
                         S3Bucket: !Ref S3BucketCodeBuild
@@ -130,7 +130,7 @@ Resources:
             Properties:
                   TemplateURL: !Sub https://s3.amazonaws.com/${S3BucketCodePipeline}/${S3KeyCodePipeline}
                   Parameters:
-                        BuildImage: aws/codebuild/java:openjdk-8
+                        BuildImage: aws/codebuild/standard:3.0
                         ProjectName: !Ref ReciterPubmedCodeBuildProjectName
                         RepositoryUrl: !Sub https://github.com/${GitHubUser}/${ReciterPubmedGitHubRepo}.git
                         S3Bucket: !Ref S3BucketCodeBuild
@@ -150,7 +150,7 @@ Resources:
             Properties:
                   TemplateURL: !Sub https://s3.amazonaws.com/${S3BucketCodePipeline}/${S3KeyCodePipeline}
                   Parameters:
-                        BuildImage: aws/codebuild/java:openjdk-8
+                        BuildImage: aws/codebuild/standard:3.0
                         ProjectName: !Ref ReciterPubManagerCodeBuildProjectName
                         RepositoryUrl: !Sub https://github.com/${GitHubUser}/${ReciterPubManagerGitHubRepo}.git
                         S3Bucket: !Ref S3BucketCodeBuild
