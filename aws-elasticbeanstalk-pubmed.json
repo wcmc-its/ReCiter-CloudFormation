@@ -81,7 +81,7 @@
                 "CNAMEPrefix": {
                     "Ref": "ApplicationCNAME"
                 },
-                "SolutionStackName": "64bit Amazon Linux 2018.03 v2.10.4 running Java 8",
+                "SolutionStackName": "64bit Amazon Linux 2 v3.1.4 running Corretto 11",
                 "OptionSettings": [
                     {
                         "Namespace": "aws:elasticbeanstalk:environment:process:default",
@@ -91,7 +91,7 @@
                     {
                         "Namespace": "aws:elasticbeanstalk:environment:process:default",
                         "OptionName": "HealthCheckPath",
-                        "Value": "/swagger-ui.html"
+                        "Value": "/swagger-ui/index.html"
                     },
                     {
                         "Namespace": "aws:elasticbeanstalk:environment:process:default",
